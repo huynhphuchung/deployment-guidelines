@@ -1,0 +1,60 @@
+name: CI-CD on DEV
+on:
+  push:
+    branches: [ "dev" ]
+    paths:
+      - 'identity-service/**'
+      - '.github/workflows/ci-cd-identity-dev.yml'
+
+env:
+  DOCKER_NAMESPACE: devteria
+  DOCKER_IMAGE: identity-service
+  SERVICE_DIR: identity-service
+
+jobs:
+  build_and_push_identity_service:
+    name: Build and push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B package -pl ${{ env.SERVICE_DIR }} -am -DskipTests --file pom.xml
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: registry.docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_NAMESPACE }}/${{ env.DOCKER_IMAGE }}
+          tags: |
+            type=ref,event=branch
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./${{ env.SERVICE_DIR }}/Dockerfile
+          push: true
+          platforms: linux/amd64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            JAR_FILE=${{ env.SERVICE_DIR }}/target/*.jar
