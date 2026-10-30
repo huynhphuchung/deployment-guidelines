@@ -53,11 +53,9 @@ jobs:
         id: push
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./${{ env.SERVICE_DIR }}
           file: ./${{ env.SERVICE_DIR }}/Dockerfile
           push: true
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            JAR_FILE=${{ env.SERVICE_DIR }}/target/*.jar
