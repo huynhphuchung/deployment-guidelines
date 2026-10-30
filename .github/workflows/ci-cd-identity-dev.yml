@@ -84,6 +84,6 @@ jobs:
           passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
           script: |
             cd deployment/services
-            export IDENTITY_IMAGE=${{ needs.build_and_push_identity_service.outputs.image_tag }}
+            export IDENTITY_IMAGE=${{ needs.build_and_push.outputs.image_tag }}
             docker compose pull identity-service
             docker compose up -d --no-deps identity-service

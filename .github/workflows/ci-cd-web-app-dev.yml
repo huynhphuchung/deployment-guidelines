@@ -75,6 +75,6 @@ jobs:
           passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
           script: |
             cd deployment/services
-            export WEB_APP_IMAGE=${{ needs.build_and_push_web_app.outputs.image_tag }}
+            export WEB_APP_IMAGE=${{ needs.build_and_push.outputs.image_tag }}
             docker compose pull web-app
             docker compose up -d --no-deps web-app
