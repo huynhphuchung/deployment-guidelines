@@ -1,10 +1,10 @@
 name: CI-CD on DEV
 on:
   push:
-    branches: [ "dev" ]
+    branches: ["dev"]
     paths:
-      - 'identity-service/**'
-      - '.github/workflows/ci-cd-identity-dev.yml'
+      - "identity-service/**"
+      - ".github/workflows/ci-cd-identity-dev.yml"
 
 env:
   DOCKER_NAMESPACE: hunghp666
@@ -16,6 +16,8 @@ jobs:
     name: Build and push
     runs-on: ubuntu-latest
     environment: dev
+    outputs:
+      image_tag: ${{ steps.get_tag.outputs.tag }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -23,8 +25,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '25'
-          distribution: 'temurin'
+          java-version: "25"
+          distribution: "temurin"
           cache: maven
 
       - name: Build and Run Tests with Maven
@@ -60,3 +62,27 @@ jobs:
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Get image tag for deploy
+        id: get_tag
+        run: |
+          TAG=$(echo "${{ steps.meta.outputs.tags }}" | grep "dev-" | head -n 1)
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          
+  deploy_to_docker_compose:
+    name: Deploy to Docker Compose
+    needs: build_and_push_identity_service
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd deployment/services
+            echo "IDENTITY_IMAGE=${{ needs.build_and_push_identity_service.outputs.image_tag }}" >> .env
+            docker compose pull identity-service
+            docker compose up -d --no-deps identity-service
