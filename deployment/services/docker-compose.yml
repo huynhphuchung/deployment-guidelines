@@ -1,7 +1,7 @@
 services:
 
   web-app:
-    image:  ${WEB_APP_IMAGE}
+    image: ${WEB_APP_IMAGE}
     pull_policy: always
     container_name: web-app
     restart: always
