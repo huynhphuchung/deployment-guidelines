@@ -1,7 +1,8 @@
 services:
 
   web-app:
-    image: devteria/web-app:0.9.1
+    image:  ${WEB_APP_IMAGE}
+    pull_policy: always
     container_name: web-app
     restart: always
     ports:
@@ -13,6 +14,7 @@ services:
 
   identity-service:
     image: ${IDENTITY_IMAGE}
+    pull_policy: always
     container_name: identity-service
     restart: always
     environment:
