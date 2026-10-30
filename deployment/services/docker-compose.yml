@@ -1,7 +1,7 @@
 services:
 
   web-app:
-    image: ${WEB_APP_IMAGE}
+    image: ${WEB_APP_IMAGE:hunghp666/web-app:latest}
     pull_policy: always
     container_name: web-app
     restart: always
@@ -13,7 +13,7 @@ services:
       - NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
 
   identity-service:
-    image: ${IDENTITY_IMAGE}
+    image: ${IDENTITY_IMAGE:hunghp666/identity-service:latest}
     pull_policy: always
     container_name: identity-service
     restart: always
