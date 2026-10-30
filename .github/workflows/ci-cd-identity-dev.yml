@@ -12,8 +12,8 @@ env:
   SERVICE_DIR: identity-service
 
 jobs:
-  build_and_push_identity_service:
-    name: Build and push
+  build_and_push:
+    name: Build and push (Identity Service)
     runs-on: ubuntu-latest
     environment: dev
     outputs:
@@ -70,8 +70,8 @@ jobs:
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
   deploy_to_docker_compose:
-    name: Deploy to Docker Compose
-    needs: build_and_push_identity_service
+    name: Deploy to Docker Compose (Identity Service)
+    needs: build_and_push
     runs-on: ubuntu-latest
     environment: dev
     steps:
