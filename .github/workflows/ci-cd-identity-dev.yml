@@ -7,7 +7,7 @@ on:
       - '.github/workflows/ci-cd-identity-dev.yml'
 
 env:
-  DOCKER_NAMESPACE: devteria
+  DOCKER_NAMESPACE: hunghp666
   DOCKER_IMAGE: identity-service
   SERVICE_DIR: identity-service
 
