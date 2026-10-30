@@ -12,7 +12,6 @@ env:
   SERVICE_DIR: web-app
   NEXT_PUBLIC_API_BASE_URL: https://api.devteria.io
 
-
 jobs:
   build_and_push:
     name: Build and push (Web App)

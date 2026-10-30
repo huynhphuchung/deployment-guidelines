@@ -11,7 +11,6 @@ env:
   DOCKER_IMAGE: identity-service
   SERVICE_DIR: identity-service
 
-
 jobs:
   build_and_push:
     name: Build and push (Identity Service)
